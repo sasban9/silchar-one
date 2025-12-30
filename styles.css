@@ -7,9 +7,9 @@ table{max-width: 500px;font-size: 1.4rem;margin:0 auto;}
 p{margin-bottom: 60px;padding: 0 40px;}
 ul,ol{text-align: left;max-width: 600px;margin: 20px auto 60px;padding-left: 60px;}
 li{padding: 6px 0;}
-a{background-color: gold;color: #000;font-weight: bold;text-decoration: none;padding: 0 10px 2px;border-radius: 4px;line-height: 1.2rem;}
-strong{background: goldenrod;color: darkmagenta;}
-h1,h2,h3{background: #ffd700;color: crimson;font-family: fantasy;opacity: 0.55;}
+a{background-color: indianred;color: #000;font-weight: bold;text-decoration: none;padding: 0 10px 2px;border-radius: 4px;line-height: 1.2rem;}
+strong{background: goldenrod;color: #000;}
+h1,h2,h3{background: purple;color: white;font-family: fantasy;opacity: 0.85;}
 th{background: burlywood;color: black;}
 td{font-family: monospace;text-align: center;width: 12%;border: solid 1px;min-height: 100px;padding: 0px 0px;}
 td:nth-of-type(7n+8){background: #fff9;color: red;font-size: 12pt;}
