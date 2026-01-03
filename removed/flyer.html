@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOS1000 Tri-Fold Flyer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #222;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Hide scrollbar during animation */
+            perspective: 1500px; /* Perspective for 3D effect */
+        }
+
+        .flyer-container {
+            width: 100%; /* A4 width */
+            max-width: 1400px; /* Approx 3x A4 portrait width */
+            height: 800px; /* A4 height */
+            display: flex;
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
+            transition: transform 1.5s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            background-color: #428; /* Ensure background for inner panels */
+            transform: translateX(0) rotateY(0deg); /* Initial state: closed */
+        }
+
+        /* --- Panel Sizing and Base Styling --- */
+        .flyer-panel {
+            flex-shrink: 0; /* Prevents panels from shrinking */
+            width: calc(100% / 3); /* Each physical panel is 1/3 of the total width */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+            box-sizing: border-box;
+            color: #333;
+            border-right: 1px solid rgba(0,0,0,0.05); /* Visual separation */
+            position: relative;
+            backface-visibility: hidden; /* Prevents back of elements from showing through */
+        }
+        .flyer-panel:last-child {
+            border-right: none;
+        }
+
+        .flyer-panel h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 900; color: #1a1a1a; }
+        .flyer-panel h2 { font-size: 1.2em; margin-top: 0; font-weight: 700; color: #555; }
+        .flyer-panel p { font-size: 0.9em; line-height: 1.5; color: #666; }
+        .flyer-panel ul { list-style: none; padding: 0; margin: 10px 0; }
+        .flyer-panel ul li { font-size: 0.9em; margin-bottom: 5px; color: #444; }
+        .flyer-panel .cta-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+        .flyer-panel .cta-button:hover {
+            background-color: #0056b3;
+        }
+        .flyer-panel .small-text { font-size: 0.75em; color: #999; margin-top: 5px;}
+
+        /* --- Image Styling --- */
+        .panel-image {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .panel-image.full-width {
+            max-height: none;
+            height: auto;
+            width: 100%;
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        /* Specific image styling for backgrounds or overlays */
+        .panel-1 { background-color: #e6f7ff; }
+        .panel-3 { background-color: #ffe6e6; }
+        .panel-4 { background-color: #e0ffe0; }
+
+        /* --- 3D Folding Structure --- */
+        .fold {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: calc(100% / 3); /* Each fold represents 1/3 of the flyer's total width */
+            transform-origin: left center;
+            transition: transform 1s ease-in-out;
+            transform-style: preserve-3d;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .fold-1 {
+            left: calc(100% / 3 * 2); /* Position the first fold (Panel 1 & Panel 2) to cover the rightmost panels */
+            z-index: 20; /* Keep front panel on top */
+            /* Panel 1 is 'front', Panel 2 is 'back' of this fold */
+        }
+        .fold-2 {
+            left: calc(100% / 3); /* Position the second fold (Panel 3 & Panel 4) next to the rightmost fold */
+            z-index: 15;
+            /* Panel 3 is 'front', Panel 4 is 'back' of this fold */
+        }
+        .fold-3 {
+            left: 0;
+            z-index: 5;
+            /* Panel 5 is 'front', Panel 6 is 'back' of this fold */
+            /* This fold will stay mostly static as others open */
+        }
+
+        /* --- Inner Panels of Folds --- */
+        .fold .inner-panel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+            box-sizing: border-box;
+            background-color: #293;
+            backface-visibility: hidden;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* Panels within fold-1 (Front & Inside Left) */
+        .fold-1 .inner-panel:nth-child(1) { /* This is Panel 1 - FRONT */
+            transform: rotateY(0deg) translateZ(1px); /* Slightly in front for overlap */
+            z-index: 2;
+        }
+        .fold-1 .inner-panel:nth-child(2) { /* This is Panel 2 - INSIDE LEFT */
+            transform: rotateY(180deg) translateZ(1px); /* Back side of fold-1 */
+            z-index: 1;
+        }
+
+        /* Panels within fold-2 (Back & Inside Middle Left) */
+        .fold-2 .inner-panel:nth-child(1) { /* This is Panel 3 - BACK (when closed) */
+            transform: rotateY(0deg) translateZ(1px);
+            z-index: 2;
+        }
+        .fold-2 .inner-panel:nth-child(2) { /* This is Panel 4 - INSIDE MIDDLE LEFT */
+            transform: rotateY(180deg) translateZ(1px);
+            z-index: 1;
+        }
+
+        /* Panels within fold-3 (Inside Middle Right & Inside Right) */
+        .fold-3 .inner-panel:nth-child(1) { /* This is Panel 5 - INSIDE MIDDLE RIGHT */
+            transform: rotateY(0deg) translateZ(1px);
+            z-index: 2;
+        }
+        .fold-3 .inner-panel:nth-child(2) { /* This is Panel 6 - INSIDE RIGHT */
+            transform: rotateY(180deg) translateZ(1px);
+            z-index: 1;
+        }
+
+        /* --- Animation States --- */
+        .flyer-container.open {
+             /* When fully open, flatten the view */
+            transform: translateX(0) rotateY(0deg);
+        }
+
+        .flyer-container.open .fold-1 {
+            transform: rotateY(-180deg); /* Opens the first fold to the left */
+            left: calc(100% / 3); /* Moves into position */
+        }
+
+        .flyer-container.open .fold-2 {
+            transform: rotateY(0deg); /* Stays flat, but moves with fold-1 */
+            left: calc(100% / 3 * 2); /* Moves into position */
+        }
+
+        .flyer-container.open .fold-3 {
+            transform: rotateY(0deg); /* Stays flat */
+            left: 0;
+        }
+
+        /* Specific panel visibility during opening sequence */
+        .hidden { opacity: 0; }
+        .revealed { opacity: 1; transition: opacity 0.5s ease-in-out; }
+
+        /* Initial closed state adjustments */
+        .flyer-container:not(.open) .fold-1 .inner-panel:nth-child(1) {
+            background-color: #fff; /* Ensure front panel is white when closed */
+        }
+        .flyer-container:not(.open) .fold-1 {
+            transform: rotateY(0deg);
+        }
+        .flyer-container:not(.open) .fold-2 {
+            transform: rotateY(0deg);
+        }
+        .flyer-container:not(.open) .fold-3 {
+            transform: rotateY(0deg);
+        }
+
+        /* For the full-width, side-by-side view after animation */
+        .flyer-container.fully-open {
+            transform: none !important; /* Reset any leftover transform */
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            box-shadow: none;
+            border-radius: 0;
+            background: none;
+        }
+        .flyer-container.fully-open .fold {
+            position: relative;
+            transform: none !important;
+            width: calc(100% / 3);
+            left: auto !important;
+            box-shadow: none;
+            z-index: auto !important;
+        }
+        .flyer-container.fully-open .inner-panel {
+            position: relative;
+            transform: none !important;
+            width: 100%;
+            height: 100%;
+            left: auto !important;
+            top: auto !important;
+            backface-visibility: visible;
+            box-shadow: none;
+            border-right: 1px solid rgba(0,0,0,0.05);
+        }
+        .flyer-container.fully-open .fold:nth-child(1) .inner-panel:nth-child(1) { order: 1; } /* Panel 1 */
+        .flyer-container.fully-open .fold:nth-child(1) .inner-panel:nth-child(2) { order: 2; } /* Panel 2 */
+        .flyer-container.fully-open .fold:nth-child(2) .inner-panel:nth-child(1) { order: 3; } /* Panel 3 */
+        .flyer-container.fully-open .fold:nth-child(2) .inner-panel:nth-child(2) { order: 4; } /* Panel 4 */
+        .flyer-container.fully-open .fold:nth-child(3) .inner-panel:nth-child(1) { order: 5; } /* Panel 5 */
+        .flyer-container.fully-open .fold:nth-child(3) .inner-panel:nth-child(2) { order: 6; } /* Panel 6 */
+        .flyer-container.fully-open .fold-3 .inner-panel:nth-child(2) { border-right: none; } /* Last panel */
+
+
+        /* Ensure content in panels is visible when fully open */
+        .flyer-container.fully-open .inner-panel { opacity: 1 !important; }
+
+        /* Base Content Areas */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* For images */
+        }
+        .content-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px 0;
+            object-fit: cover;
+            object-position: center;
+        }
+        .content-area.image-background {
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+        .content-area.image-background h1,
+        .content-area.image-background h2,
+        .content-area.image-background .small-text {
+            color: white;
+        }
+
+        /* Specific Panel Backgrounds/Images */
+        .panel-1 .content-area.image-background {
+            background-image: url('https://eastwindinc.ca/eastwindwp24/wp-content/uploads/2019/09/AdobeStock_148629250_elnariz_SMALL.jpg'); /* Replace with actual image */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .panel-2 .content-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .panel-2 .content-area img {
+            width: 100%;
+            height: 150px;
+        }
+
+        .panel-3 .content-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .panel-3 .image-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .panel-3 .image-stack img {
+            width: 100px;
+            height: auto;
+        }
+        .panel-4 .content-area img {
+            width: 100%;
+            height: 250px;
+        }
+        .panel-5 .content-area img {
+            max-width: 150px;
+        }
+         .panel-6 .content-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .panel-6 .content-area .bullet-points {
+            text-align: left;
+            width: 80%;
+            margin-top: 15px;
+        }
+        .panel-6 .content-area .bullet-points li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .panel-6 .content-area .bullet-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .panel-6 .content-area .split-image {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .panel-6 .content-area .split-image img {
+            width: 48%; /* Adjust to fit */
+            height: 100px;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .flyer-container {
+                height: 500px;
+                max-width: 100%;
+            }
+            .flyer-panel h1 { font-size: 1.8em; }
+            .flyer-panel h2 { font-size: 1em; }
+            .flyer-panel p, .flyer-panel ul li { font-size: 0.8em; }
+            .flyer-panel .cta-button { padding: 8px 15px; font-size: 0.9em; }
+            .panel-image { max-height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flyer-container" id="flyer">
+        <div class="fold fold-1" id="fold1">
+            <div class="inner-panel panel-1">
+                <div class="content-area image-background">
+                    <h1>Be One of the 1000.</h1>
+                    <h2>Silchar’s Elite Business Network.</h2>
+                    <p class="small-text">Tap to discover your advantage.</p>
+                </div>
+            </div>
+            <div class="inner-panel panel-2 hidden">
+                <div class="content-area">
+                    <h1>Lost in the Crowd?</h1>
+                    <h2>Your business deserves more than a forgotten listing.</h2>
+                    <div style="display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 20px;">
+                        <img src="https://i.ytimg.com/vi/2ydtkmR0TZw/maxresdefault.jpg" alt="Generic Directory Listing" style="width: 45%; object-fit: cover;">
+                        <img src="https://www.hollywoodreporter.com/wp-content/uploads/2015/10/ap_220409076973.jpg?w=1440&h=810&crop=1" alt="BOS1000 Spotlight" style="width: 45%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fold fold-2" id="fold2">
+            <div class="inner-panel panel-3 hidden">
+                <div class="content-area">
+                    <h1>Own Your Digital Future.</h1>
+                    <h2>Seats are strictly limited. Prices are rising.</h2>
+                    <div class="image-stack" style="margin-top: 20px;">
+                        <img src="https://www.hollywoodreporter.com/wp-content/uploads/2015/10/ap_220409076973.jpg?w=1440&h=810&crop=1" alt="Current Price">
+                        <img src="https://www.shutterstock.com/editorial/image-editorial/N2T6Ub49N9TbA308NjU2Nw==/mike-rezendes-spotlight-reporter-mark-ruffalo-440nw-5550653m.jpg" alt="Future Price Crossed Out">
+                    </div>
+                    <!-- <a href="https://sasban.online/join" target="_blank" class="cta-button">CLAIM YOUR SPOT NOW.</a> -->
+                    <p class="small-text" style="margin-top: 10px;">Scan or Visit:<br>silchar-one.space/join</p>
+                </div>
+            </div>
+            <div class="inner-panel panel-4 hidden">
+                <div class="content-area">
+                    <h1>Your Network. Their Clients.</h1>
+                    <h2>Unlock a city-wide client base.</h2>
+                    <img src="https://linkunlimited.org/wp-content/uploads/2025/09/image32-85.png" alt="Synergy Loop Infographic" class="panel-image full-width">
+                </div>
+            </div>
+        </div>
+
+        <div class="fold fold-3" id="fold3">
+            <div class="inner-panel panel-5 hidden">
+                <div class="content-area">
+                    <h1>Beyond a Listing.</h1>
+                    <h2>A Mark of Silchar's Elite.</h2>
+                    <img src="https://lsa-artists.org/wp-content/uploads/2025/10/image-asset.webp" style="width: 200px;height: 150px;" alt="BOS1000 Verified Member Badge" class="panel-image">
+                    <img src="https://resources.sbcamericas.com/sbcamericas/2023/01/Spotlight-Sports-Group-Renshaw-CEO.jpg" style="width: 200px;height: 100px;" alt="Owner Affixing Badge" class="panel-image">
+                </div>
+            </div>
+            <div class="inner-panel panel-6 hidden">
+                <div class="content-area">
+                    <h1>Your Membership Includes:</h1>
+                    <ul class="bullet-points">
+                        <li>Dedicated Online Profile</li>
+                        <li>Exclusive Deals Showcase</li>
+                        <li>Network with 999 Leaders</li>
+                        <li>City-Wide Marketing Support</li>
+                    </ul>
+                    <p class="small-text">P.S. 100% of your membership fee fuels YOUR marketing.</p>
+                    <div class="split-image">
+                        <img src="https://via.placeholder.com/150x100/607d8b/ffffff?text=Member+Dashboard" alt="Member Dashboard Analytics">
+                        <img src="https://via.placeholder.com/150x100/795548/ffffff?text=Networking+Event" alt="Networking Event">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flyer = document.getElementById('flyer');
+            const fold1 = document.getElementById('fold1');
+            const fold2 = document.getElementById('fold2');
+
+            // Get all inner panels for visibility control
+            const panels = document.querySelectorAll('.inner-panel');
+            const panel1 = panels[0]; // Front panel (visible initially)
+            const panel2 = panels[1]; // Inside Left
+            const panel3 = panels[2]; // Back (when closed)
+            const panel4 = panels[3]; // Inside Middle Left
+            const panel5 = panels[4]; // Inside Middle Right
+            const panel6 = panels[5]; // Inside Right
+
+            let isOpen = false;
+
+            // Initial state: Only Panel 1 is visible
+            panel1.classList.remove('hidden');
+
+            flyer.addEventListener('click', () => {
+                if (isOpen) {
+                    // Reset to closed state if already open
+                    flyer.classList.remove('open', 'fully-open');
+                    panels.forEach(p => p.classList.add('hidden'));
+                    panel1.classList.remove('hidden');
+                    isOpen = false;
+                    return;
+                }
+
+                isOpen = true;
+                flyer.classList.add('open');
+
+                // Animation sequence
+                setTimeout(() => {
+                    // After fold 1 opens, reveal Panel 2
+                    panel2.classList.remove('hidden');
+                }, 500); // Slight delay for fold 1 to start moving
+
+                setTimeout(() => {
+                    // After a bit more, reveal Panel 3
+                    panel3.classList.remove('hidden');
+                }, 1000); // Delay for Panel 3 after fold 1 is mostly open
+
+                setTimeout(() => {
+                    // After fold 2 opens, reveal Panel 4
+                    panel4.classList.remove('hidden');
+                }, 1500); // Delay for Panel 4
+
+                setTimeout(() => {
+                    // Reveal Panel 5
+                    panel5.classList.remove('hidden');
+                }, 2000); // Delay for Panel 5
+
+                setTimeout(() => {
+                    // Reveal Panel 6
+                    panel6.classList.remove('hidden');
+                }, 2500); // Delay for Panel 6
+
+                // After all folds are visually open, switch to the fully-open class
+                // to arrange them side-by-side without 3D transforms.
+                setTimeout(() => {
+                    flyer.classList.add('fully-open');
+                    flyer.style.transform = 'none'; // Ensure no lingering transforms
+                    panels.forEach(p => p.style.opacity = '1'); // Ensure all are fully visible
+                }, 3500); // Give enough time for the folds to settle
+            });
+        });
+    </script>
+</body>
+</html>

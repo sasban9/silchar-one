@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOS1000 Tri-Fold Flyer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin: 0;box-sizing: border-box;}
+        html{scrollbar-width: none;}
+        body{background: #222;color: #ccc;font-family: 'Montserrat', sans-serif;}
+        img{max-width: 100%;}
+        .inner-panel{height: 50vh;padding: 1rem;}
+        .content-area{display: flex;flex-direction: column;}
+        .inner-panel:nth-of-type(odd){background: darkgreen;}
+        #flyer{display: flex;justify-content: space-around;}
+        .fold{max-width: 33%;}
+    </style>
+</head>
+<body>
+
+    <div class="flyer-container" id="flyer">
+        <div class="fold fold-1" id="fold1">
+            <div class="inner-panel panel-1">
+                <div class="content-area image-background">
+                    <h1>Be One of the 1000.</h1>
+                    <h2>Silchar’s Elite Business Network.</h2>
+                    <img src="https://silchar-one.space/img/logo.png" height="240" alt="">
+                    <p class="small-text">Tap to discover your advantage.</p>
+                </div>
+            </div>
+            <div class="inner-panel panel-2 hidden">
+                <div class="content-area">
+                    <h1>Lost in the Crowd?</h1>
+                    <h2>Your business deserves more than a forgotten listing.</h2>
+                    <div style="display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: 20px;">
+                        <img src="https://i.ytimg.com/vi/2ydtkmR0TZw/maxresdefault.jpg" alt="Generic Directory Listing" style="width: 45%; object-fit: cover;">
+                        <img src="https://www.hollywoodreporter.com/wp-content/uploads/2015/10/ap_220409076973.jpg?w=1440&h=810&crop=1" alt="BOS1000 Spotlight" style="width: 45%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fold fold-2" id="fold2">
+            <div class="inner-panel panel-3 hidden">
+                <div class="content-area">
+                    <h1>Own Your Digital Future.</h1>
+                    <h2>Seats are strictly limited. Prices are rising.</h2>
+                    <div class="image-stack" style="margin-top: 20px;">
+                        <img src="https://www.hollywoodreporter.com/wp-content/uploads/2015/10/ap_220409076973.jpg?w=1440&h=810&crop=1" style="width: 200px;height: 150px;" alt="Current Price">
+                        <img src="./img/qr-code.png" style="height: 150px;" alt="Future Price Crossed Out">
+                    </div>
+                    <!-- <a href="https://sasban.online/join" target="_blank" class="cta-button">CLAIM YOUR SPOT NOW.</a> -->
+                    <p class="small-text" style="margin-top: 10px;">Visit: silchar-one.space/links</p>
+                </div>
+            </div>
+            <div class="inner-panel panel-4 hidden">
+                <div class="content-area">
+                    <h1>Your Network. Their Clients.</h1>
+                    <h2>Unlock a city-wide client base.</h2>
+                    <img src="https://linkunlimited.org/wp-content/uploads/2025/09/image32-85.png" alt="Synergy Loop Infographic" class="panel-image full-width">
+                </div>
+            </div>
+        </div>
+
+        <div class="fold fold-3" id="fold3">
+            <div class="inner-panel panel-5 hidden">
+                <div class="content-area">
+                    <h1>Beyond a Listing.</h1>
+                    <h2>A Mark of Silchar's Elite.</h2>
+                    <img src="https://lsa-artists.org/wp-content/uploads/2025/10/image-asset.webp" style="width: 200px;height: 150px;" alt="BOS1000 Verified Member Badge" class="panel-image">
+                    <img src="https://resources.sbcamericas.com/sbcamericas/2023/01/Spotlight-Sports-Group-Renshaw-CEO.jpg" style="width: 200px;height: 100px;" alt="Owner Affixing Badge" class="panel-image">
+                </div>
+            </div>
+            <div class="inner-panel panel-6 hidden">
+                <div class="content-area">
+                    <h1>Your Membership Includes:</h1>
+                    <ul class="bullet-points">
+                        <li>Dedicated Online Profile</li>
+                        <li>Exclusive Deals Showcase</li>
+                        <li>Network with 999 Leaders</li>
+                        <li>City-Wide Marketing Support</li>
+                    </ul>
+                    <p class="small-text">P.S. 100% of your membership fee fuels YOUR marketing.</p>
+                    <div class="split-image">
+                        <img src="https://learn.microsoft.com/en-us/power-bi/create-reports/media/service-dashboards/power-bi-dashboard2.png" style="height:100px;width:150px;" alt="Member Dashboard Analytics">
+                        <img src="https://www.eventbrite.co.uk/blog/wp-content/uploads/2022/06/iStock-665387356.jpg" style="height: 100px;width: 150px;" alt="Networking Event">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flyer = document.getElementById('flyer');
+            const fold1 = document.getElementById('fold1');
+            const fold2 = document.getElementById('fold2');
+
+            // Get all inner panels for visibility control
+            const panels = document.querySelectorAll('.inner-panel');
+            const panel1 = panels[0]; // Front panel (visible initially)
+            const panel2 = panels[1]; // Inside Left
+            const panel3 = panels[2]; // Back (when closed)
+            const panel4 = panels[3]; // Inside Middle Left
+            const panel5 = panels[4]; // Inside Middle Right
+            const panel6 = panels[5]; // Inside Right
+
+            let isOpen = false;
+
+            // Initial state: Only Panel 1 is visible
+            panel1.classList.remove('hidden');
+
+            flyer.addEventListener('click', () => {
+                if (isOpen) {
+                    // Reset to closed state if already open
+                    flyer.classList.remove('open', 'fully-open');
+                    panels.forEach(p => p.classList.add('hidden'));
+                    panel1.classList.remove('hidden');
+                    isOpen = false;
+                    return;
+                }
+
+                isOpen = true;
+                flyer.classList.add('open');
+
+                // Animation sequence
+                setTimeout(() => {
+                    // After fold 1 opens, reveal Panel 2
+                    panel2.classList.remove('hidden');
+                }, 500); // Slight delay for fold 1 to start moving
+
+                setTimeout(() => {
+                    // After a bit more, reveal Panel 3
+                    panel3.classList.remove('hidden');
+                }, 1000); // Delay for Panel 3 after fold 1 is mostly open
+
+                setTimeout(() => {
+                    // After fold 2 opens, reveal Panel 4
+                    panel4.classList.remove('hidden');
+                }, 1500); // Delay for Panel 4
+
+                setTimeout(() => {
+                    // Reveal Panel 5
+                    panel5.classList.remove('hidden');
+                }, 2000); // Delay for Panel 5
+
+                setTimeout(() => {
+                    // Reveal Panel 6
+                    panel6.classList.remove('hidden');
+                }, 2500); // Delay for Panel 6
+
+                // After all folds are visually open, switch to the fully-open class
+                // to arrange them side-by-side without 3D transforms.
+                setTimeout(() => {
+                    flyer.classList.add('fully-open');
+                    flyer.style.transform = 'none'; // Ensure no lingering transforms
+                    panels.forEach(p => p.style.opacity = '1'); // Ensure all are fully visible
+                }, 3500); // Give enough time for the folds to settle
+            });
+        });
+    </script>
+</body>
+</html>
