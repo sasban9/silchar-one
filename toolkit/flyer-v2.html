@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheSilchar1000 - Membership Tiers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #D4AF37;
+            --highlight: #ff3e3e;
+            --bg: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f4f4f4; 
+            display: flex; 
+            justify-content: center; 
+            padding: 40px 0;
+            filter: invert(-1);
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 277mm;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ultra-bold { font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .gold-text { color: var(--accent); }
+        
+        header { border-bottom: 8px solid var(--primary); padding-bottom: 15px; text-align: center; }
+        .main-title { font-size: 60px; letter-spacing: -2px; }
+        .sub-title { font-size: 20px; font-weight: 300; margin-top: 10px; letter-spacing: 1px; }
+
+        .announcement-bar {
+            background: var(--highlight);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        /* Pricing Grid */
+        .pricing-grid {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .price-card {
+            border: 2px solid #eee;
+            padding: 20px;
+            transition: 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        .price-card:hover { border-color: var(--accent); background: #fffdf5; }
+        .price-card.selected { border-color: var(--primary); background: #f9f9f9; box-shadow: 5px 5px 0px var(--primary); }
+        
+        .cohort-label { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; }
+        .price-value { font-size: 32px; font-weight: 900; margin: 5px 0; }
+        .price-subtext { font-size: 11px; color: #666; font-weight: 400; }
+
+        /* The Elite Seat */
+        .elite-card {
+            grid-column: span 2;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border: 2px solid var(--accent);
+        }
+        .elite-card .price-value { color: var(--accent); font-size: 48px; }
+
+        .features-list {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #444;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .cta-section {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 30px;
+        }
+        .total-display { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            padding: 18px 50px;
+            font-size: 22px;
+            font-weight: 900;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+        button:hover { background: var(--accent); }
+
+        .footer-note { font-size: 11px; margin-top: 15px; color: #999; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="a4-page">
+    <header>
+        <div class="ultra-bold main-title">TheSilchar<span class="gold-text">1000</span></div>
+        <div class="sub-title">ANNUAL MEMBERSHIP ADMISSION - 2026</div>
+    </header>
+
+    <div class="announcement-bar">
+        STRICTLY LIMITED: 1,000 TOTAL NODES ACROSS 4 COHORTS
+    </div>
+
+    <div class="pricing-grid" id="pricingGrid">
+        <div class="price-card selected" onclick="selectTier(this, 1000, 'Cohort 1')">
+            <div class="cohort-label">Cohort 1 (Slots 1-250)</div>
+            <div class="price-value">₹1,000<span style="font-size: 14px;">/year</span></div>
+            <p class="price-subtext">Founding Member Rate. Limited Availability.</p>
+        </div>
+
+        <div class="price-card" onclick="selectTier(this, 2000, 'Cohort 2')">
+            <div class="cohort-label">Cohort 2 (Slots 251-500)</div>
+            <div class="price-value">₹2,000<span style="font-size: 14px;">/year</span></div>
+            <p class="price-subtext">Early Growth Access.</p>
+        </div>
+
+        <div class="price-card" onclick="selectTier(this, 5000, 'Cohort 3')">
+            <div class="cohort-label">Cohort 3 (Slots 501-750)</div>
+            <div class="price-value">₹5,000<span style="font-size: 14px;">/year</span></div>
+            <p class="price-subtext">Standard Network Entry.</p>
+        </div>
+
+        <div class="price-card" onclick="selectTier(this, 10000, 'Cohort 4')">
+            <div class="cohort-label">Cohort 4 (Slots 751-1000)</div>
+            <div class="price-value">₹10,000<span style="font-size: 14px;">/year</span></div>
+            <p class="price-subtext">Final Tier Access.</p>
+        </div>
+
+        <div class="price-card elite-card" onclick="selectTier(this, 49000, 'Coveted Seat')">
+            <div class="cohort-label" style="color: var(--accent);">VVIP ACCESS</div>
+            <div class="price-value">₹49,000<span style="font-size: 18px; color: white;">/year</span></div>
+            <p style="font-size: 12px;">Top 10 Directory Placement + Permanent Homepage Spotlight.</p>
+        </div>
+    </div>
+
+    <div class="features-list">
+        <div>• Individual "Face-Brand" Profile</div>
+        <div>• Hotel Cachar Club Mixer Access</div>
+        <div>• Borail View Regency Tech Meets</div>
+        <div>• City-Wide Digital Synergy Loop</div>
+        <div>• Weekly "BOS Deal" Promotion</div>
+        <div>• Verified Member Badge (Physical)</div>
+    </div>
+
+    <div class="cta-section">
+        <div class="total-display">Selected: <span id="selectedTier">Cohort 1</span> | Due: <span id="priceDisplay">₹1,000</span></div>
+        <button onclick="checkout()">APPLY FOR MEMBERSHIP</button>
+        <p class="footer-note">
+            *All memberships are valid for 12 months from the date of activation. <br>
+            Renewal rates are subject to the active cohort price at the time of renewal.
+        </p>
+    </div>
+</div>
+
+<script>
+    let currentPrice = 1000;
+    let currentTier = "Cohort 1";
+
+    function selectTier(element, price, name) {
+        // Remove selection from all
+        document.querySelectorAll('.price-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Add to clicked
+        element.classList.add('selected');
+        
+        // Update variables
+        currentPrice = price;
+        currentTier = name;
+        
+        // Update UI
+        document.getElementById('priceDisplay').innerText = `₹${price.toLocaleString('en-IN')}`;
+        document.getElementById('selectedTier').innerText = name;
+    }
+
+    function checkout() {
+        alert(`Initializing payment for ${currentTier}: ₹${currentPrice.toLocaleString('en-IN')}`);
+        // Redirect to your JS payment function or Razorpay intent here
+    }
+</script>
+
+</body>
+</html>

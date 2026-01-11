@@ -25,3 +25,6 @@ article>div{max-height: 55vh;}
 @media screen and (min-width:481px) and (max-width:768px) {
     article>div{min-width: 50%;min-height: 70vh;}
 }
+@media print {
+    html{background-size: 200%;}
+}
